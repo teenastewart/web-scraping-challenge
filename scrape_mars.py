@@ -18,8 +18,8 @@ def scrape_info():
     soup = bs(html, "html.parser")
 
     # Get the title and paragraph of the recent article
-    news_title = soup.find('div', class_='content_title')
-    news_text = soup.find('div', class_='article_teaser_body')    
+    news_title = soup.find('div', class_='content_title').text
+    news_text = soup.find('div', class_='article_teaser_body').text    
     
     # Scrape image
 
@@ -46,7 +46,14 @@ def scrape_info():
     
     # convert table to dataframe
     df = tables[0]
-    
+    # Grab the first row
+    new_header = df.iloc[0]
+    # Re-define dataframe as table minus first row
+    df = df[1:] 
+    # reset the header to the first row
+    df.columns = new_header 
+    # Reset index
+    df = df.reset_index(drop=True)
     # convert dataframe to HTML table
     html_table = df.to_html()
     
@@ -56,10 +63,10 @@ def scrape_info():
         "news_text": news_text,
         "mars_image": mars_image,
         "facts_table": html_table,
-        "hemispheres": {1:{"title": "Valles Marineris Hemisphere", "img_url": "https://marshemispheres.com/images/valles_marineris_enhanced-full.jpg"}, 
-                        2:{"title": "Cerberus Hemisphere", "img_url": "https://marshemispheres.com/images/full.jpg"},
-                        3:{"title": "Schiaparelli Hemisphere", "img_url": "https://marshemispheres.com/images/schiaparelli_enhanced-full.jpg"},
-                        4:{"title": "Syrtis Major Hemisphere", "img_url": "https://marshemispheres.com/images/syrtis_major_enhanced-full.jpg"}}
+        "hemispheres": {"Valles":{"title": "Valles Marineris Hemisphere", "img_url": "https://marshemispheres.com/images/valles_marineris_enhanced-full.jpg"}, 
+                        "Cerberus":{"title": "Cerberus Hemisphere", "img_url": "https://marshemispheres.com/images/full.jpg"},
+                        "Schiaparelli":{"title": "Schiaparelli Hemisphere", "img_url": "https://marshemispheres.com/images/schiaparelli_enhanced-full.jpg"},
+                        "Syrtis":{"title": "Syrtis Major Hemisphere", "img_url": "https://marshemispheres.com/images/syrtis_major_enhanced-full.jpg"}}
 
     }
 
